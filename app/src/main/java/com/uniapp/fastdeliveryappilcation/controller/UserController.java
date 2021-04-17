@@ -4,21 +4,26 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.room.Room;
 
 import com.uniapp.fastdeliveryappilcation.database.UserDatabase;
 import com.uniapp.fastdeliveryappilcation.model.User;
 import com.uniapp.fastdeliveryappilcation.view.ILoginView;
+import com.uniapp.fastdeliveryappilcation.view.ISignUpView;
 
 import java.util.Map;
 
 public class UserController implements IUserController {
     ILoginView loginView;
+    ISignUpView signUpView;
+
     private UserDatabase userDatabase;
 
-    public UserController(ILoginView loginView) {
+    public UserController(ILoginView loginView, ISignUpView signUpView) {
         this.loginView = loginView;
+        this.signUpView = signUpView;
         userDatabase = Room.databaseBuilder((Context) loginView, UserDatabase.class, userDatabase.DB_NAME).build();
     }
 
@@ -27,6 +32,11 @@ public class UserController implements IUserController {
     public void onLogin(Map<String, Object> params) {
 
         new GetById().execute(params);
+    }
+
+    @Override
+    public void onSignUp(Map<String, Object> params) {
+        new OnSignUp().execute(params);
     }
 
     @Override
@@ -60,6 +70,32 @@ public class UserController implements IUserController {
             }
             else {
                 loginView.OnLoginError("Login failed");
+            }
+
+            onDestroy();
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class OnSignUp extends AsyncTask<Map<String, Object>, User, User> {
+        @Override
+        public User doInBackground(Map<String, Object>... maps) {
+            User user = (User) maps[0];
+
+            User result = userDatabase.getUserDao().insetAll(user);
+            Log.e("Insert user", result.getName());
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(User user) {
+            super.onPostExecute(user);
+
+            if (user != null) {
+                signUpView.OnSignUpSuccess(user);
+            }
+            else {
+                signUpView.OnSignUpError("Login failed !");
             }
 
             onDestroy();

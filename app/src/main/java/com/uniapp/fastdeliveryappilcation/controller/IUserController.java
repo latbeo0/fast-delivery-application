@@ -4,5 +4,6 @@ import java.util.Map;
 
 public interface IUserController {
     void onLogin(Map<String, Object> params);
+    void onSignUp(Map<String, Object> params);
     void onDestroy();
 }
