@@ -52,7 +52,7 @@ public class SignupActivity extends AppCompatActivity implements ISignUpView {
         name = findViewById(R.id.user_name);
         email = findViewById(R.id.user_email);
         phone = findViewById(R.id.altphone);
-        password = findViewById(R.id.user_password);
+        password = findViewById(R.id.altphone);
 
 
         next.setOnClickListener(view -> {
