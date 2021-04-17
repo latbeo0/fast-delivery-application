@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        userController = new UserController(this);
+        userController = new UserController(this, null);
 
         OnLogin();
     }

@@ -11,10 +11,10 @@ import com.uniapp.fastdeliveryappilcation.model.User;
 @Dao
 public interface UserDao {
     @Insert
-    void insetAll(User... user);
+    User insetAll(User... user);
 
     @Update
-    void updateAll(User... user);
+    User updateAll(User... user);
 
     @Delete
     void deleteAll(User... user);
