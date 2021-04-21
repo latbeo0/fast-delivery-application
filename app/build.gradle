@@ -14,6 +14,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -28,6 +29,8 @@ android {
     }
 }
 
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 dependencies {
     def room_version = "2.2.6"
 
@@ -44,4 +47,14 @@ dependencies {
 
     /* Room database testing helper */
     testImplementation "androidx.room:room-testing:$room_version"
+
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:27.1.0')
+
+    // Declare the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth:20.0.4'
+
+    //Otp
+    implementation 'com.github.aabhasr1:OtpView:1.0.6'
 }
