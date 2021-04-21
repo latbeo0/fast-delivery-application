@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "375625828934",
+    "project_id": "fast-delivery-application",
+    "storage_bucket": "fast-delivery-application.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:375625828934:android:54ca854d86ae5e276fd847",
+        "android_client_info": {
+          "package_name": "com.uniapp.fastdeliveryappilcation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "375625828934-tcsdha4ji5uiu15lv889t9e2o1qsuuic.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uniapp.fastdeliveryappilcation",
+            "certificate_hash": "0b88fff5e7305fca21a7754e7953a68babca16e4"
+          }
+        },
+        {
+          "client_id": "375625828934-tf7952d5m8po7kuftpc9872uctej44n5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsZoG1AWvgwDITfSM-psnvUnxf1P6BF90"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "375625828934-tf7952d5m8po7kuftpc9872uctej44n5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
