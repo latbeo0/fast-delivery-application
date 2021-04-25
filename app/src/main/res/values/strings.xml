@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Fast Delivery Appilcation</string>
+    <string name="facebook_app_id">325463865602182</string>
+    <string name="Rs">\u20B9</string>
 </resources>

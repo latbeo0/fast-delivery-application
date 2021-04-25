@@ -10,6 +10,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.uniapp.fastdeliveryappilcation.controller.IUserController;
 import com.uniapp.fastdeliveryappilcation.controller.UserController;
 import com.uniapp.fastdeliveryappilcation.view.IVerificationView;
@@ -22,6 +24,7 @@ import in.aabhasjindal.otptextview.OtpTextView;
 public class VerificationActivity extends AppCompatActivity implements IVerificationView {
     private Button submit;
     private OtpTextView otpTextView;
+    private FirebaseAuth mAuth;
 
     IUserController userController;
 
@@ -34,31 +37,22 @@ public class VerificationActivity extends AppCompatActivity implements IVerifica
                 WindowManager.LayoutParams.FLAG_FULLSCREEN); //enable full screen
         setContentView(R.layout.activity_verification);
 
-        userController = new UserController( this);
+        /* Initialization firebase */
+        FirebaseApp.initializeApp(this);
+        mAuth = FirebaseAuth.getInstance();
 
+        userController = new UserController( this, null, mAuth);
         otpTextView = findViewById(R.id.otp_view);
         submit  =findViewById(R.id.submit);
 
         String userDetails = getIntent().getStringExtra("object");
-
         Map<String, Object> data = new HashMap<>();
-
         data.put("phone", userDetails);
+        data.put("submit", submit);
+        data.put("otpTextView", otpTextView);
 
-        userController.onLogin(data);
+        userController.onFirebasePhoneAuthentication(data);
 
-        submit.setOnClickListener(v -> {
-            String code = otpTextView.getOTP();
-
-            if (code.isEmpty() || code.length() < 6) {
-
-                otpTextView.showError();
-                return;
-            }
-
-            userController.codeVerification(code);
-
-        });
     }
 
     /* Events */
