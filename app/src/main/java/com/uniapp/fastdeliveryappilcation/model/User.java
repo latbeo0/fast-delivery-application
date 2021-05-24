@@ -14,11 +14,14 @@ public class User {
     @ColumnInfo(name = "name")
     private String name;
 
-    @ColumnInfo(name = "city")
-    private String city;
+    @ColumnInfo(name = "password")
+    private String password;
 
-    @ColumnInfo(name = "title")
-    private long title;
+    @ColumnInfo(name = "email")
+    private String email;
+
+    @ColumnInfo(name = "phone")
+    private String phone;
 
     public long getId() {
         return id;
@@ -36,19 +39,27 @@ public class User {
         this.name = name;
     }
 
-    public String getCity() {
-        return city;
+    public String getPassword() {
+        return password;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public long getTitle() {
-        return title;
+    public String getEmail() {
+        return email;
     }
 
-    public void setTitle(long title) {
-        this.title = title;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

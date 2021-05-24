@@ -18,7 +18,85 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:text="DELIVER TO"
+                        android:textSize="12sp" />
+
+                    <ImageButton
+                        android:id="@+id/getmap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="#FCF5F5F5"
+                        android:paddingTop="3dp"
+                        android:src="@drawable/arrow_down"
+                        android:tint="@color/colorPrimary" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/loc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Patia"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/color_button"
+                android:backgroundTint="@color/white"
+                android:orientation="horizontal"
+                android:padding="3dp"
+                android:weightSum="3">
+
+                <ImageButton
+                    android:id="@+id/dash_wallet"
+                    android:layout_width="46dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:src="@drawable/wallet" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/open_sans"
+                    android:padding="2dp"
+                    android:text="@string/Rs"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/dashboard_credits"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="1400"
+                    android:textAlignment="center"
+                    android:textSize="15sp" />
+            </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
