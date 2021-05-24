@@ -3,6 +3,7 @@ package com.uniapp.fastdeliveryappilcation;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Window;
@@ -25,6 +26,7 @@ public class VerificationActivity extends AppCompatActivity implements IVerifica
     private Button submit;
     private OtpTextView otpTextView;
     private FirebaseAuth mAuth;
+    private SharedPreferences sharedPreferences;
 
     IUserController userController;
 
@@ -41,7 +43,7 @@ public class VerificationActivity extends AppCompatActivity implements IVerifica
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
 
-        userController = new UserController( this, null, mAuth);
+        userController = new UserController( this, null,null,null, mAuth);
         otpTextView = findViewById(R.id.otp_view);
         submit  =findViewById(R.id.submit);
 
@@ -52,13 +54,24 @@ public class VerificationActivity extends AppCompatActivity implements IVerifica
         data.put("otpTextView", otpTextView);
 
         userController.onFirebasePhoneAuthentication(data);
+        sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE);
+    }
 
+    @Override
+    public void handlePreferences(Map<String, Object> params) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("email", params.get("email") != null ? (String) params.get("email") : "");
+        editor.putString("name", params.get("name") != null ? (String) params.get("email") : "");
+        editor.putString("phone", params.get("phone") != null ? (String) params.get("phone") : "");
+        editor.apply();
     }
 
     /* Events */
     @Override
     public void OnLoginSuccess(Parcelable passingObj) {
         /* Move to next activity */
+        Map<String, Object> params = userController.getUserDataFromFirebase();
+        userController.SaveUserData(this, params);
         startActivity(new Intent(VerificationActivity.this, MainActivity.class).putExtra("object", passingObj));
     }
 

@@ -19,6 +19,6 @@ public interface UserDao {
     @Delete
     void deleteAll(User... user);
 
-    @Query("SELECT * FROM User WHERE Id = :id")
-    User findById(Long id);
+    @Query("SELECT * FROM User WHERE email = :email")
+    User findById(String email);
 }

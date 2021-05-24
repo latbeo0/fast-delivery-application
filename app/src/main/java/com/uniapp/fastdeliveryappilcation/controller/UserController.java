@@ -2,14 +2,19 @@ package com.uniapp.fastdeliveryappilcation.controller;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.room.Room;
 
 import com.facebook.AccessToken;
@@ -25,16 +30,22 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.uniapp.fastdeliveryappilcation.dao.UserDao;
 import com.uniapp.fastdeliveryappilcation.database.UserDatabase;
 import com.uniapp.fastdeliveryappilcation.model.User;
 import com.uniapp.fastdeliveryappilcation.view.ILoginView;
+import com.uniapp.fastdeliveryappilcation.view.IProfileView;
 import com.uniapp.fastdeliveryappilcation.view.IVerificationView;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import in.aabhasjindal.otptextview.OtpTextView;
@@ -42,20 +53,27 @@ import in.aabhasjindal.otptextview.OtpTextView;
 public class UserController implements IUserController {
     IVerificationView verificationView;
     ILoginView loginView;
+    IProfileView profile;
+    View profileView;
     private UserDatabase userDatabase;
     String codeVerificationBySystem;
     FirebaseAuth mAuth;
     private Button submit;
     private OtpTextView otpTextView;
 
-    public UserController(IVerificationView verificationView, ILoginView loginView, FirebaseAuth mAuth) {
+    public UserController(IVerificationView verificationView, ILoginView loginView, View profileView,IProfileView profile,  FirebaseAuth mAuth) {
         this.mAuth = mAuth;
         this.verificationView = verificationView;
         this.loginView = loginView;
+        this.profileView = profileView;
+        this.profile = profile;
+
         if (verificationView != null) {
             userDatabase = Room.databaseBuilder((Context) verificationView, UserDatabase.class, userDatabase.DB_NAME).build();
-        } else {
+        } else if (loginView != null) {
             userDatabase = Room.databaseBuilder((Context) loginView, UserDatabase.class, userDatabase.DB_NAME).build();
+        } else if (profileView != null) {
+            userDatabase = Room.databaseBuilder(profileView.getContext(), UserDatabase.class, userDatabase.DB_NAME).build();
         }
     }
 
@@ -114,15 +132,18 @@ public class UserController implements IUserController {
     };
 
     @Override
-    public void codeVerification(PhoneAuthCredential credential) {
+    public Map<String, Object> codeVerification(PhoneAuthCredential credential) {
+        Map<String, Object> params = new HashMap<>();
         mAuth.signInWithCredential(credential).addOnCompleteListener((Activity) verificationView, task -> {
             if (task.isSuccessful()) {
-                verificationView.OnLoginSuccess(null);
+               verificationView.OnLoginSuccess(null);
             }
             else {
                 verificationView.OnLoginError(task.getException().getMessage());
             }
         });
+
+        return params;
     }
 
     /* Google Authentication */
@@ -153,7 +174,12 @@ public class UserController implements IUserController {
 
         mAuth.signInWithCredential(authCredential).addOnCompleteListener((Activity) loginView, task -> {
             if (task.isSuccessful()) {
-                loginView.OnLoginSuccess(null);
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (firebaseUser != null) {
+                    loginView.OnLoginSuccess(null);
+                } else {
+                    loginView.OnLoginError("Cannot get user information!");
+                }
             }
             else {
                 loginView.OnLoginError(task.getException().getMessage());
@@ -162,39 +188,87 @@ public class UserController implements IUserController {
     }
 
     @Override
-    public void onDestroy() {
-        userDatabase.close();
+    public void SaveUserData(Activity activity, Map<String, Object> params) {
+        ContextCompat.getMainExecutor(activity).execute(()  -> {
+            new saveUserData(activity).execute(params);
+        });
+    }
+
+    @Override
+    public Map<String, Object> getUserDataFromFirebase() {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser == null) return null;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", firebaseUser.getDisplayName());
+        params.put("email", firebaseUser.getEmail());
+        params.put("phone", firebaseUser.getPhoneNumber());
+
+        return params;
+    }
+
+    @Override
+    public void getUserData(String email) {
+        Executor myExecutor = Executors.newSingleThreadExecutor();
+        myExecutor.execute(() -> {
+            UserDao userDao = userDatabase.getUserDao();
+            User user = userDao.findById(email);
+
+            if (user == null) return;
+            profile.loadUserData(user, profileView);
+        });
     }
 
     /* Implementation async tasks */
     @SuppressLint("StaticFieldLeak")
-    private class GetById extends AsyncTask<Map<String, Object>, Map<String, Object>, Map<String, Object>> {
+    private class saveUserData extends AsyncTask<Map<String, Object>, Map<String, Object>, Map<String, Object>> {
+        private ProgressDialog dialog;
+
+        public saveUserData(Activity activity) {
+            dialog = new ProgressDialog(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("Loading...");
+            dialog.show();
+        }
+
         @Override
         public Map<String, Object> doInBackground(Map<String, Object>... maps) {
             Map<String, Object> params = maps[0];
-            User user = userDatabase.getUserDao().findById((Long) params.get("phoneNumber"));
+            User user = new User();
+            if (params.get("phone") != null) {
+                user.setPhone((String) params.get("phone"));
+            }
 
-            if (user != null) {
-                params.put("result", true);
+            if (params.get("email") != null) {
+                user.setPhone((String) params.get("email"));
             }
-            else {
-                params.put("result", false);
+
+            if (params.get("name") != null) {
+                user.setPhone((String) params.get("name"));
             }
+
+            UserDao userDao = userDatabase.getUserDao();
+            userDao.insetAll(user);
+
             return params;
         }
 
         @Override
         protected void onPostExecute(Map<String, Object> stringObjectMap) {
             super.onPostExecute(stringObjectMap);
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
 
-            if ((Boolean) stringObjectMap.get("result")) {
-                verificationView.OnLoginSuccess((Parcelable) stringObjectMap.get("phoneNumber"));
+            if (verificationView != null) {
+                verificationView.handlePreferences(stringObjectMap);
             }
             else {
-                verificationView.OnLoginError("Login failed");
+                loginView.handlePreferences(stringObjectMap);
             }
-
-            onDestroy();
         }
     }
 }

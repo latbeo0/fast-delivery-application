@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
@@ -38,6 +39,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     private Integer RC_SIGN_IN = 1;
     private FirebaseAuth mAuth;
     private CallbackManager callbackManager;
+    private SharedPreferences sharedPreferences;
 
     IUserController userController;
     EditText phoneNumber;
@@ -70,7 +72,10 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
 
         /* Initialization Controller */
-        userController = new UserController(null, this, mAuth);
+        userController = new UserController(null, this,null,null, mAuth);
+        sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE);
+
+        OnLoginCheck();
 
         OnGoogleLogin();
 
@@ -78,6 +83,13 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
 
         OnOtpLogin();
 
+    }
+
+    private void OnLoginCheck() {
+        if (!sharedPreferences.getString("email","").isEmpty()
+            && !sharedPreferences.getString("name","").isEmpty()) {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        }
     }
 
     /* Button event listeners */
@@ -152,10 +164,21 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         }
     }
 
+    @Override
+    public void handlePreferences(Map<String, Object> params) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("email", params.get("email") != null ? (String) params.get("email") : "");
+        editor.putString("name", params.get("name") != null ? (String) params.get("email") : "");
+        editor.putString("phone", params.get("phone") != null ? (String) params.get("phone") : "");
+        editor.apply();
+    }
+
     /* Events */
     @Override
     public void OnLoginSuccess(Parcelable passingObj) {
         /* Move to next activity */
+        Map<String, Object> params = userController.getUserDataFromFirebase();
+        userController.SaveUserData(this, params);
         startActivity(new Intent(LoginActivity.this, MainActivity.class).putExtra("object", passingObj));
     }
 
