@@ -19,6 +19,15 @@ public interface UserDao {
     @Delete
     void deleteAll(User... user);
 
-    @Query("SELECT * FROM User WHERE email = :email")
+    @Query("SELECT * FROM User WHERE email like :email OR phone like :email OR name like :email LIMIT 1")
     User findById(String email);
+
+    @Query("SELECT * FROM User WHERE id = :email LIMIT 1")
+    User findBySpecialId(String email);
+
+    @Query("UPDATE User SET amount = :amount WHERE id = :id")
+    void handleWallet(String id, String amount);
+
+    @Query("UPDATE User SET address = :amount WHERE id = :id")
+    void handleAddress(String id, String amount);
 }

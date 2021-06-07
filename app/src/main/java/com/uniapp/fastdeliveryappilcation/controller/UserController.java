@@ -38,7 +38,10 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.uniapp.fastdeliveryappilcation.dao.UserDao;
 import com.uniapp.fastdeliveryappilcation.database.UserDatabase;
 import com.uniapp.fastdeliveryappilcation.model.User;
+import com.uniapp.fastdeliveryappilcation.view.IAddMoneyView;
+import com.uniapp.fastdeliveryappilcation.view.ICheckoutView;
 import com.uniapp.fastdeliveryappilcation.view.ILoginView;
+import com.uniapp.fastdeliveryappilcation.view.IMapView;
 import com.uniapp.fastdeliveryappilcation.view.IProfileView;
 import com.uniapp.fastdeliveryappilcation.view.IVerificationView;
 
@@ -54,6 +57,10 @@ public class UserController implements IUserController {
     IVerificationView verificationView;
     ILoginView loginView;
     IProfileView profile;
+    ICheckoutView checkoutView;
+    IAddMoneyView addMoneyView;
+    IMapView mapView;
+
     View profileView;
     private UserDatabase userDatabase;
     String codeVerificationBySystem;
@@ -61,20 +68,43 @@ public class UserController implements IUserController {
     private Button submit;
     private OtpTextView otpTextView;
 
-    public UserController(IVerificationView verificationView, ILoginView loginView, View profileView,IProfileView profile,  FirebaseAuth mAuth) {
+    public UserController(IVerificationView verificationView, FirebaseAuth mAuth) {
         this.mAuth = mAuth;
         this.verificationView = verificationView;
+
+        userDatabase = Room.databaseBuilder((Context) verificationView, UserDatabase.class, userDatabase.DB_NAME).build();
+    }
+
+    public UserController(ILoginView loginView,  FirebaseAuth mAuth) {
+        this.mAuth = mAuth;
         this.loginView = loginView;
+
+        userDatabase = Room.databaseBuilder((Context) loginView, UserDatabase.class, userDatabase.DB_NAME).build();
+    }
+
+    public UserController(View profileView,IProfileView profile) {
         this.profileView = profileView;
         this.profile = profile;
 
-        if (verificationView != null) {
-            userDatabase = Room.databaseBuilder((Context) verificationView, UserDatabase.class, userDatabase.DB_NAME).build();
-        } else if (loginView != null) {
-            userDatabase = Room.databaseBuilder((Context) loginView, UserDatabase.class, userDatabase.DB_NAME).build();
-        } else if (profileView != null) {
-            userDatabase = Room.databaseBuilder(profileView.getContext(), UserDatabase.class, userDatabase.DB_NAME).build();
-        }
+        userDatabase = Room.databaseBuilder(profileView.getContext(), UserDatabase.class, userDatabase.DB_NAME).build();
+    }
+
+    public UserController(ICheckoutView checkoutView) {
+        this.checkoutView = checkoutView;
+
+        userDatabase = Room.databaseBuilder((Context) checkoutView, UserDatabase.class, userDatabase.DB_NAME).build();
+    }
+
+    public UserController(IAddMoneyView addMoneyView) {
+        this.addMoneyView = addMoneyView;
+
+        userDatabase = Room.databaseBuilder((Context) addMoneyView, UserDatabase.class, userDatabase.DB_NAME).build();
+    }
+
+    public UserController(IMapView mapView) {
+        this.mapView = mapView;
+
+        userDatabase = Room.databaseBuilder((Context) mapView, UserDatabase.class, userDatabase.DB_NAME).build();
     }
 
     /* Implementation business function */
@@ -83,7 +113,6 @@ public class UserController implements IUserController {
         this.submit = (Button) params.get("submit");
         this.otpTextView = (OtpTextView) params.get("otpTextView");
         sendVerificationSms((String) params.get("phone"));
-        //new GetById().execute(params);
     }
 
     /* Firebase Authentication */
@@ -208,14 +237,21 @@ public class UserController implements IUserController {
     }
 
     @Override
-    public void getUserData(String email) {
+    public void getUserData(String info, IVerificationView verificationView, ILoginView loginView) {
         Executor myExecutor = Executors.newSingleThreadExecutor();
         myExecutor.execute(() -> {
             UserDao userDao = userDatabase.getUserDao();
-            User user = userDao.findById(email);
+            User user = userDao.findById(info);
+            Map<String, Object> params = new HashMap<>();
+            params.put("id",user.getId());
+            params.put("email",user.getEmail());
+            params.put("phone",user.getPhone());
+            params.put("name",user.getName());
+            params.put("amount",user.getAmount());
+            params.put("address",user.getAddress());
 
-            if (user == null) return;
-            profile.loadUserData(user, profileView);
+            if (verificationView != null) verificationView.handlePreferences(params);
+            else if (loginView != null) loginView.handlePreferences(params);
         });
     }
 
@@ -243,11 +279,11 @@ public class UserController implements IUserController {
             }
 
             if (params.get("email") != null) {
-                user.setPhone((String) params.get("email"));
+                user.setEmail((String) params.get("email"));
             }
 
             if (params.get("name") != null) {
-                user.setPhone((String) params.get("name"));
+                user.setName((String) params.get("name"));
             }
 
             UserDao userDao = userDatabase.getUserDao();
@@ -263,12 +299,64 @@ public class UserController implements IUserController {
                 dialog.dismiss();
             }
 
+            String info = stringObjectMap.get("phone") != null ? (String) stringObjectMap.get("phone") :
+                    (stringObjectMap.get("email") != null ? (String) stringObjectMap.get("email") :
+                            (stringObjectMap.get("name") != null ? (String) stringObjectMap.get("name") : ""));
+
             if (verificationView != null) {
-                verificationView.handlePreferences(stringObjectMap);
+                getUserData("%" + info + "%",verificationView, null);
             }
             else {
-                loginView.handlePreferences(stringObjectMap);
+                getUserData("%" + info + "%", null, loginView);
             }
         }
+    }
+
+    @Override
+    public void updateData(User user, View view) {
+        Executor myExecutor = Executors.newSingleThreadExecutor();
+        myExecutor.execute(() -> {
+            UserDao userDao = userDatabase.getUserDao();
+            userDao.updateAll(user);
+
+            ContextCompat.getMainExecutor(view.getContext()).execute(()  -> {
+                profile.handleEditSuccess(user);
+            });
+        });
+    }
+
+    @Override
+    public void handleWallet(String id, long price, Boolean isUpdate, IAddMoneyView addMoneyView) {
+        Executor myExecutor = Executors.newSingleThreadExecutor();
+        if (isUpdate) {
+            myExecutor.execute(() -> {
+                UserDao userDao = userDatabase.getUserDao();
+                userDao.handleWallet(id, String.valueOf(price));
+
+                checkoutView.updatePreferences(String.valueOf(price));
+                checkoutView.addSubscription(addMoneyView);
+            });
+        } else {
+            myExecutor.execute(() -> {
+                UserDao userDao = userDatabase.getUserDao();
+                userDao.handleWallet(id, String.valueOf(price));
+
+                addMoneyView.updatePreferences(String.valueOf(price));
+                addMoneyView.addWalletTransaction("", addMoneyView);
+            });
+        }
+    }
+
+    @Override
+    public void handleAddress(String id, String address) {
+        Executor myExecutor = Executors.newSingleThreadExecutor();
+        myExecutor.execute(() -> {
+            UserDao userDao = userDatabase.getUserDao();
+            userDao.handleAddress(id, address);
+
+            ContextCompat.getMainExecutor((Context) mapView).execute(()  -> {
+                mapView.updateAddressPreferences(address);
+            });
+        });
     }
 }

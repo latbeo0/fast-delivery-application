@@ -43,7 +43,7 @@ public class VerificationActivity extends AppCompatActivity implements IVerifica
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
 
-        userController = new UserController( this, null,null,null, mAuth);
+        userController = new UserController( this, mAuth);
         otpTextView = findViewById(R.id.otp_view);
         submit  =findViewById(R.id.submit);
 
@@ -60,9 +60,12 @@ public class VerificationActivity extends AppCompatActivity implements IVerifica
     @Override
     public void handlePreferences(Map<String, Object> params) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("id", params.get("id") != null ? (String) params.get("id") : "");
         editor.putString("email", params.get("email") != null ? (String) params.get("email") : "");
         editor.putString("name", params.get("name") != null ? (String) params.get("email") : "");
         editor.putString("phone", params.get("phone") != null ? (String) params.get("phone") : "");
+        editor.putString("amount", params.get("amount") != null ? (String) params.get("amount") : "");
+        editor.putString("address", params.get("address") != null ? (String) params.get("address") : "");
         editor.apply();
     }
 

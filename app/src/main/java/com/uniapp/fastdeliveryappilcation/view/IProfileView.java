@@ -6,4 +6,5 @@ import com.uniapp.fastdeliveryappilcation.model.User;
 
 public interface IProfileView {
     void loadUserData(User user, View views);
+    void handleEditSuccess(User user);
 }

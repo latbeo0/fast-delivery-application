@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.uniapp.fastdeliveryappilcation.FeedbackActivity;
 import com.uniapp.fastdeliveryappilcation.MapActivity;
 import com.uniapp.fastdeliveryappilcation.PaymentActivity;
@@ -33,7 +34,10 @@ import org.jetbrains.annotations.NotNull;
 public class ProfileFragment extends Fragment implements IProfileView {
     private Context context;
     private TextView name, email, phone, editProfile;
+    private UserController userController;
     private SharedPreferences sharedPreferences;
+    EditProfileBottomSheet editProfileBottomSheet;
+    FirebaseAuth mAuth;
 
     private Button logout;
     private LinearLayout manageAddress, payment, orderTrial, shareApp, leaveFeedBack,contactUs;
@@ -53,7 +57,8 @@ public class ProfileFragment extends Fragment implements IProfileView {
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        UserController userController = new UserController(null,null,view, this, null);
+        userController = new UserController(view, this);
+        mAuth = FirebaseAuth.getInstance();
 
         initData(view);
 
@@ -89,7 +94,7 @@ public class ProfileFragment extends Fragment implements IProfileView {
 
     private void initAddress(View view) {
         manageAddress = view.findViewById(R.id.manage_address);
-        manageAddress.setOnClickListener(v -> startActivity(new Intent(context, MapActivity.class).putExtra("callingActivity",002)));
+        manageAddress.setOnClickListener(v -> startActivity(new Intent(context, MapActivity.class)));
     }
 
     private void initOrder(View view) {
@@ -103,7 +108,7 @@ public class ProfileFragment extends Fragment implements IProfileView {
             String title = "Are you sure want to logout";
             String p = "Logout";
             String n = "Cancel";
-            CustomDialogFragment dialog  = new CustomDialogFragment(context,title,p,n, ActivityConstants.ProfileFragment);
+            CustomDialogFragment dialog  = new CustomDialogFragment(context,title,p,n, ActivityConstants.ProfileFragment, mAuth, sharedPreferences);
             dialog.show(getFragmentManager(),"dialog");
         });
     }
@@ -144,9 +149,30 @@ public class ProfileFragment extends Fragment implements IProfileView {
     private void initEditProfile(View view) {
         editProfile = view.findViewById(R.id.editProfile);
         editProfile.setOnClickListener(v -> {
-            EditProfileBottomSheet editProfileBottomSheet = new EditProfileBottomSheet(context,sharedPreferences.getString("phone",""),
-                    sharedPreferences.getString("email",""),sharedPreferences.getString("phone",""));
+            editProfileBottomSheet = new EditProfileBottomSheet(context, userController,
+                    sharedPreferences.getString("id",""),
+                    sharedPreferences.getString("name",""),
+                    sharedPreferences.getString("email",""),
+                    sharedPreferences.getString("phone",""),
+                    sharedPreferences.getString("amount",""),
+                    sharedPreferences.getString("address",""));
+
             editProfileBottomSheet.show(getChildFragmentManager(),"bottomSheet");
         });
+    }
+
+    @Override
+    public void handleEditSuccess(User user) {
+        if (editProfileBottomSheet != null) editProfileBottomSheet.dismiss();
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("id", String.valueOf(user.getId()));
+        editor.putString("email", user.getEmail());
+        editor.putString("name", user.getName());
+        editor.putString("phone", user.getPhone());
+        editor.putString("amount", user.getAmount().isEmpty() ? "0" : user.getAmount());
+        editor.apply();
+
+        initData(getView());
     }
 }

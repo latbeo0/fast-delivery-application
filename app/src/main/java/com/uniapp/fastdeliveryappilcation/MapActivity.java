@@ -7,9 +7,12 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Animatable2;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
@@ -19,6 +22,8 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -41,43 +46,59 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.uniapp.fastdeliveryappilcation.controller.UserController;
+import com.uniapp.fastdeliveryappilcation.view.IMapView;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, IMapView {
     private GoogleMap mGoogleMap;
-    private View mapView;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private ImageView moveMarker, iv_lines;
-    private LatLng finalLatLng;
-    private List<Address> addressList;
     private Geocoder geocoder;
-    private AnimatedVectorDrawable avd;
-    private TextInputEditText location, landmark;
-    private LocationCallback locationCallback;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
+    private LocationCallback locationCallback;
+    private View mapView;
     private final float DEFAULT_ZOOM = 19;
+
+    private ImageView moveMarker;
+    private TextInputEditText location, landmark;
+    private List<Address> addressList;
+    private LatLng finalLatLng;
+    private MaterialButton save;
+    private ImageView iv_lines;
+    private AnimatedVectorDrawable avd;
+
+    private SharedPreferences sharedPreferences;
+    private UserController userController;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE); //will hide the title
+        getSupportActionBar().hide(); // hide the title bar
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN); //enable full screen
         setContentView(R.layout.activity_map);
+
+        userController = new UserController(this);
+        sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
         mapView = mapFragment.getView();
-
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapActivity.this);
-        moveMarker = findViewById(R.id.text3);
-        location = findViewById(R.id.maps_details_address);
-        landmark = findViewById(R.id.landmark);
-        iv_lines = findViewById(R.id.iv_line);
-        avd = (AnimatedVectorDrawable) iv_lines.getBackground();
+        initData();
 
         avd.registerAnimationCallback(new Animatable2.AnimationCallback() {
             @Override
@@ -85,10 +106,27 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 iv_lines.post(() -> avd.start());
             }
         });
-
         avd.start();
     }
 
+    private void initData() {
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapActivity.this);
+        moveMarker = findViewById(R.id.text3);
+        location = findViewById(R.id.maps_details_address);
+        save = findViewById(R.id.save);
+        iv_lines = findViewById(R.id.iv_line);
+        avd = (AnimatedVectorDrawable) iv_lines.getBackground();
+
+        save.setOnClickListener(v -> {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("location", addressList.get(0).getLocality());
+            editor.apply();
+
+            userController.handleAddress(sharedPreferences.getString("id",""), addressList.get(0).getAddressLine(0));
+        });
+    }
+
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
@@ -146,8 +184,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
         });
     }
 
@@ -162,10 +198,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void getLocationString(LatLng finalLatLng) throws IOException {
-
         geocoder = new Geocoder(this, Locale.getDefault());
         addressList = geocoder.getFromLocation(finalLatLng.latitude,finalLatLng.longitude,1);
-
 
         if(!addressList.isEmpty()) {
 
@@ -183,38 +217,47 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @SuppressLint("MissingPermission")
     private void getDeviceLocation(){
         mFusedLocationProviderClient.getLastLocation()
-                .addOnCompleteListener(new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if(task.isSuccessful()){
-                            mLastKnownLocation = task.getResult();
-                            if(mLastKnownLocation != null){
-                                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()),DEFAULT_ZOOM));
+            .addOnCompleteListener(new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    if(task.isSuccessful()){
+                        mLastKnownLocation = task.getResult();
+                        if(mLastKnownLocation != null){
+                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()),DEFAULT_ZOOM));
 
-                            } else {
-                                final LocationRequest locationRequest = LocationRequest.create();
-                                locationRequest.setInterval(10000);
-                                locationRequest.setFastestInterval(5000);
-                                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                                locationCallback = new LocationCallback(){
-                                    @Override
-                                    public void onLocationResult(LocationResult locationResult) {
-                                        super.onLocationResult(locationResult);
-                                        if(locationResult == null) {
-                                            return;
-                                        }
-                                        mLastKnownLocation = locationResult.getLastLocation();
-                                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                                        mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
-                                    }
-                                };
-                                mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
-
-                            }
                         } else {
-                            Toast.makeText(MapActivity.this, "unable to get last location", Toast.LENGTH_SHORT).show();
+                            final LocationRequest locationRequest = LocationRequest.create();
+                            locationRequest.setInterval(10000);
+                            locationRequest.setFastestInterval(5000);
+                            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                            locationCallback = new LocationCallback(){
+                                @Override
+                                public void onLocationResult(LocationResult locationResult) {
+                                    super.onLocationResult(locationResult);
+                                    if(locationResult == null) {
+                                        return;
+                                    }
+                                    mLastKnownLocation = locationResult.getLastLocation();
+                                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                                    mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
+                                }
+                            };
+                            mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
+
                         }
+                    } else {
+                        Toast.makeText(MapActivity.this, "unable to get last location", Toast.LENGTH_SHORT).show();
                     }
-                });
+                }
+            });
+    }
+
+    @Override
+    public void updateAddressPreferences(String address) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("address", address);
+        editor.apply();
+
+        Toast.makeText(MapActivity.this, "Your location has been added!", Toast.LENGTH_SHORT).show();
     }
 }
