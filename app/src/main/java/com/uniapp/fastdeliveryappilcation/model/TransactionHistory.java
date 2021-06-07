@@ -1,30 +1,66 @@
 package com.uniapp.fastdeliveryappilcation.model;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "transactionHistory")
 public class TransactionHistory {
-    String transactionid;
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "transactionid")
+    long transactionid;
+
+    @ColumnInfo(name = "AddorMinus")
     String AddorMinus;
+
+    @ColumnInfo(name = "name")
     String name;
+
+    @ColumnInfo(name = "time")
     String time;
+
+    @ColumnInfo(name = "paymentmethod")
     String paymentmethod;
+
+    @ColumnInfo(name = "amount")
     String amount;
+
+    @ColumnInfo(name = "subscriptionId")
+    String subscriptionId;
 
     public TransactionHistory(){}
 
-    public TransactionHistory(String transactionid, String addorMinus, String name, String time, String paymentmethod, String amount) {
-        this.transactionid = transactionid;
-        AddorMinus = addorMinus;
+    public TransactionHistory(String addorMinus, String name, String time, String paymentmethod, String amount) {
+        this.AddorMinus = addorMinus;
         this.name = name;
         this.time = time;
         this.paymentmethod = paymentmethod;
         this.amount = amount;
     }
 
-    public String getTransactionId() {
+    public TransactionHistory(String subscriptionId, String addorMinus, String name, String time, String paymentmethod, String amount) {
+        this.AddorMinus = addorMinus;
+        this.name = name;
+        this.time = time;
+        this.paymentmethod = paymentmethod;
+        this.amount = amount;
+        this.subscriptionId = subscriptionId;
+    }
+
+    public long getTransactionid() {
         return transactionid;
     }
 
-    public void setTransactionId(String transactionid) {
+    public void setTransactionid(long transactionid) {
         this.transactionid = transactionid;
+    }
+
+    public String getSubscriptionId() {
+        return subscriptionId;
+    }
+
+    public void setSubscriptionId(String subscriptionId) {
+        this.subscriptionId = subscriptionId;
     }
 
     public String getAddorMinus() {

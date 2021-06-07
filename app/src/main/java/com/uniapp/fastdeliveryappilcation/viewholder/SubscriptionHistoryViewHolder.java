@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.uniapp.fastdeliveryappilcation.R;
 
 public class SubscriptionHistoryViewHolder extends RecyclerView.ViewHolder {
-    public TextView subscriptionid,plan,time,addorminus,amount;
+    public TextView subscriptionid,plan,time;
 
     public SubscriptionHistoryViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -17,7 +17,5 @@ public class SubscriptionHistoryViewHolder extends RecyclerView.ViewHolder {
         subscriptionid=itemView.findViewById(R.id.subid);
         plan=itemView.findViewById(R.id.plan_name);
         time=itemView.findViewById(R.id.start);
-        addorminus=itemView.findViewById(R.id.op);
-        amount=itemView.findViewById(R.id.amt);
     }
 }

@@ -1,25 +1,44 @@
 package com.uniapp.fastdeliveryappilcation.model;
 
-public class SubscriptionHistory {
-    String subscriptionid;
-    String plan;
-    String time;
-    String AddorMinus;
-    String amount;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-    public SubscriptionHistory(String subscriptionid, String plan, String time, String addorMinus, String amount) {
-        this.subscriptionid = subscriptionid;
+@Entity(tableName = "subscriptionHistory")
+public class SubscriptionHistory {
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    long id;
+
+    @ColumnInfo(name = "subscriptionid")
+    long subscriptionid;
+
+    @ColumnInfo(name = "plan")
+    String plan;
+
+    @ColumnInfo(name = "time")
+    String time;
+
+    public SubscriptionHistory(long subscriptionid, String plan, String time) {
         this.plan = plan;
         this.time = time;
-        AddorMinus = addorMinus;
-        this.amount = amount;
+        this.subscriptionid = subscriptionid;
     }
 
-    public String getSubscriptionId() {
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getSubscriptionid() {
         return subscriptionid;
     }
 
-    public void setSubscriptionId(String subscriptionid) {
+    public void setSubscriptionid(long subscriptionid) {
         this.subscriptionid = subscriptionid;
     }
 
@@ -37,21 +56,5 @@ public class SubscriptionHistory {
 
     public void setTime(String time) {
         this.time = time;
-    }
-
-    public String getAddorMinus() {
-        return AddorMinus;
-    }
-
-    public void setAddorMinus(String addorMinus) {
-        AddorMinus = addorMinus;
-    }
-
-    public String getAmount() {
-        return amount;
-    }
-
-    public void setAmount(String amount) {
-        this.amount = amount;
     }
 }

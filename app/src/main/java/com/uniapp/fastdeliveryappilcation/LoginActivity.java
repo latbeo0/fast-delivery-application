@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
 
         /* Initialization Controller */
-        userController = new UserController(null, this,null,null, mAuth);
+        userController = new UserController(this, mAuth);
         sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE);
 
         OnLoginCheck();
@@ -96,7 +96,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     @Override
     public void OnOtpLogin() {
         phoneNumber = findViewById(R.id.login_number);
-
         phoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -105,7 +104,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
                 if(charSequence.length()==10){
                     String phone_number = "+84" + charSequence.toString();
 
@@ -167,9 +165,12 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     @Override
     public void handlePreferences(Map<String, Object> params) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("id", params.get("id") != null ? String.valueOf((Long) params.get("id")) : "");
         editor.putString("email", params.get("email") != null ? (String) params.get("email") : "");
         editor.putString("name", params.get("name") != null ? (String) params.get("email") : "");
         editor.putString("phone", params.get("phone") != null ? (String) params.get("phone") : "");
+        editor.putString("amount", params.get("amount") != null ? (String) params.get("amount") : "");
+        editor.putString("address", params.get("address") != null ? (String) params.get("address") : "");
         editor.apply();
     }
 

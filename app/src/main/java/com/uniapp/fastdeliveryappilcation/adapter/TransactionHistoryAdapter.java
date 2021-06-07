@@ -1,6 +1,7 @@
 package com.uniapp.fastdeliveryappilcation.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,20 +30,24 @@ public class TransactionHistoryAdapter extends RecyclerView.Adapter<TransactionH
     public TransactionHistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         view= LayoutInflater.from(parent.getContext()).inflate(R.layout.transaction_history_single_item,parent,false);
-        TransactionHistoryViewHolder transactionHistoryViewHolder=new TransactionHistoryViewHolder(view);
-        return transactionHistoryViewHolder;
+        return new TransactionHistoryViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TransactionHistoryViewHolder holder, int position) {
-
         TransactionHistory transactionHistory = transactionHistoryList.get(position);
-        holder.transactionId.setText(transactionHistory.getTransactionId());
+        holder.transactionId.setText(String.valueOf(transactionHistory.getTransactionid()));
         holder.name.setText(transactionHistory.getName());
         holder.paymentMethod.setText(transactionHistory.getPaymentmethod());
         holder.addorMinus.setText(transactionHistory.getAddorMinus());
         holder.amount.setText(transactionHistory.getAmount());
         holder.time.setText(transactionHistory.getTime());
+
+        if (transactionHistory.getAddorMinus().equals("-")) {
+            holder.addorMinus.setTextColor(Color.RED);
+            holder.amount.setTextColor(Color.RED);
+            holder.symbol.setTextColor(Color.RED);
+        }
     }
 
     @Override

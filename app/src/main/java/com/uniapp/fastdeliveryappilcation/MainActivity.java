@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.uniapp.fastdeliveryappilcation.controller.UserController;
 import com.uniapp.fastdeliveryappilcation.fragment.DashboardFragment;
 import com.uniapp.fastdeliveryappilcation.fragment.ProfileFragment;
 import com.uniapp.fastdeliveryappilcation.fragment.SubscriptionFragment;
@@ -22,10 +23,13 @@ public class MainActivity extends AppCompatActivity implements IMainView {
     SharedPreferences sharedPreferences;
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    public MainActivity() {
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         requestWindowFeature(Window.FEATURE_NO_TITLE); //will hide the title
         getSupportActionBar().hide(); // hide the title bar
@@ -34,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements IMainView {
         setContentView(R.layout.activity_main);
         sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE);
 
-        loadFragment(new SubscriptionFragment(getApplicationContext()));
+        loadFragment(new DashboardFragment(getApplicationContext(), sharedPreferences));
         setDefaultFragment();
         onFragmentChangeListener();
     }
@@ -45,11 +49,11 @@ public class MainActivity extends AppCompatActivity implements IMainView {
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu:
-                    fragment = new DashboardFragment(getApplicationContext());
+                    fragment = new DashboardFragment(getApplicationContext(), sharedPreferences);
                     loadFragment(fragment);
                     return true;
                 case R.id.subscribe:
-                    fragment = new SubscriptionFragment(getApplicationContext());
+                    fragment = new SubscriptionFragment(getApplicationContext(), sharedPreferences);
                     loadFragment(fragment);
                     return true;
                 case R.id.profile:
@@ -68,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements IMainView {
 
     private void setDefaultFragment() {
 
-        fragment = new DashboardFragment(getApplicationContext());
+        fragment = new DashboardFragment(getApplicationContext(), sharedPreferences);
         loadFragment(fragment);
     }
 }

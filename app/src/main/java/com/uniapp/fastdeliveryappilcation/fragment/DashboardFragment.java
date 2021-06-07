@@ -2,6 +2,7 @@ package com.uniapp.fastdeliveryappilcation.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,14 +23,16 @@ import com.smarteist.autoimageslider.SliderView;
 import com.uniapp.fastdeliveryappilcation.HistoryActivity;
 import com.uniapp.fastdeliveryappilcation.MapActivity;
 import com.uniapp.fastdeliveryappilcation.R;
+import com.uniapp.fastdeliveryappilcation.controller.IProductController;
 import com.uniapp.fastdeliveryappilcation.controller.ProductController;
 import com.uniapp.fastdeliveryappilcation.ultils.SlidePagerAdapter;
 import com.uniapp.fastdeliveryappilcation.ultils.ViewPagerAdapter;
+import com.uniapp.fastdeliveryappilcation.view.IDashboardView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DashboardFragment extends Fragment {
+public class DashboardFragment extends Fragment implements IDashboardView {
     private Context context;
     private SliderView sliderView;
     private TabLayout tabLayout;
@@ -37,10 +40,16 @@ public class DashboardFragment extends Fragment {
     private ImageButton getmap,dash_wallet;
     private TextView dashBoardCredit, loc;
 
-    ProductController productController;
+    IProductController productController;
+    SharedPreferences sharedPreferences;
 
-    public DashboardFragment(Context context) {
+    public DashboardFragment(Context context, SharedPreferences sharedPreferences) {
         this.context = context;
+        this.sharedPreferences = sharedPreferences;
+    }
+
+    public DashboardFragment() {
+
     }
 
     @Nullable
@@ -52,13 +61,15 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        productController = new ProductController();
+        productController = new ProductController(this, view);
 
         sliderInitialization(view);
 
         menuInitialization(view);
 
         todayMenuInitialization(view);
+
+        productController.handleInitCredit(sharedPreferences.getString("id", ""));
     }
 
     private void sliderInitialization(View view) {
@@ -89,13 +100,17 @@ public class DashboardFragment extends Fragment {
         PagerAdapter pageadapter = new SlidePagerAdapter(getChildFragmentManager(), list);
         pager.setAdapter(pageadapter);
 
-        dashBoardCredit.setText("14000");
-        loc.setText("HCM");
+        loc.setText(sharedPreferences.getString("location","Not Set"));
 
         getmap.setOnClickListener(v -> {
             startActivity(new Intent(context, MapActivity.class));
         });
 
         dash_wallet.setOnClickListener(v -> startActivity(new Intent(context, HistoryActivity.class)));
+    }
+
+    @Override
+    public void initCredit(String number) {
+        dashBoardCredit.setText((number == null || number.isEmpty()) ? "0" : number);
     }
 }

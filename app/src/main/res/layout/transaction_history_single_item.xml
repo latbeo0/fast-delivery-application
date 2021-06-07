@@ -115,6 +115,7 @@
                         android:textSize="20sp"
                         android:textColor="#69F0AE"/>
                     <TextView
+                        android:id="@+id/symbol"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/open_sans"

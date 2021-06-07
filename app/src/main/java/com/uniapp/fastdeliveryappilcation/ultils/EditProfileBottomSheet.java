@@ -2,6 +2,7 @@ package com.uniapp.fastdeliveryappilcation.ultils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,19 +19,26 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.uniapp.fastdeliveryappilcation.R;
 import com.uniapp.fastdeliveryappilcation.VerificationActivity;
+import com.uniapp.fastdeliveryappilcation.controller.UserController;
+import com.uniapp.fastdeliveryappilcation.model.User;
 
 public class EditProfileBottomSheet extends BottomSheetDialogFragment {
-    private String number,email,username;
-    private EditText editTextNumber,editTextEmail,editTextUsername,editTextAlternateNumber;
+    private String number,email,username, Id, amount, address;
+    private EditText editTextNumber,editTextEmail,editTextUsername;
+    private UserController userController;
     private Button update;
     private Context context;
 
 
-    public EditProfileBottomSheet(Context context, String number, String email, String username) {
+    public EditProfileBottomSheet(Context context, UserController userController, String Id , String number, String email, String username, String amount, String address) {
         this.context = context;
-        this.number = number.substring(3);
+        this.number = number;
         this.email = email;
         this.username = username;
+        this.Id = Id;
+        this.userController = userController;
+        this.amount = amount;
+        this.address = address;
     }
 
     @Nullable
@@ -53,23 +61,18 @@ public class EditProfileBottomSheet extends BottomSheetDialogFragment {
         setText();
         update.setOnClickListener(view -> {
             String n  = editTextNumber.getText().toString().trim();
-            String e = editTextEmail.getText().toString().trim();
-            String u = editTextUsername.getText().toString().trim();
+            String email = editTextEmail.getText().toString().trim();
+            String userName = editTextUsername.getText().toString().trim();
+
             //TODO: Functionality Add 1. Send OTP 2. Verify Otp 3. Logout User 4. Clear Session
             Log.i(EditProfileBottomSheet.class.getSimpleName(),n);
-            if(!username.equals(u) && !u.isEmpty()){
-                updateUsername(u);
-            }
 
-            if(!email.equals(e) && !e.isEmpty() && e.contains("@")){
+            userController.updateData(new User(Long.parseLong(Id), userName, email, n, amount, address), view);
 
-                sendEmailLink();
-            }
-
-            if(!number.equals(n) && !n.isEmpty() && n.length()==10){
-                Log.i(EditProfileBottomSheet.class.getSimpleName(),n);
-                updatePhoneNumber(n);
-            }
+//            if(!number.equals(n) && n.length() == 10){
+//                Log.i(EditProfileBottomSheet.class.getSimpleName(),n);
+//                updatePhoneNumber(n);
+//            }
         });
 
     }
@@ -87,15 +90,6 @@ public class EditProfileBottomSheet extends BottomSheetDialogFragment {
     private void updatePhoneNumber(String new_number) {
         //TODO: Functionality Add 1. Send OTP 2. Verify Otp 3. Logout User 4. Clear Session
         startActivity(new Intent(context, VerificationActivity.class));
-    }
-
-    private void sendEmailLink() {
-
-        //TODO:send email to update email
-    }
-
-    private void updateUsername(final String u) {
-        dismiss();
     }
 
     private void init(View view){

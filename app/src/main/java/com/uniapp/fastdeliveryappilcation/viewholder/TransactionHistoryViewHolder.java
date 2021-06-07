@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.uniapp.fastdeliveryappilcation.R;
 
 public class TransactionHistoryViewHolder extends RecyclerView.ViewHolder {
-    public TextView transactionId,name,time,addorMinus,amount,paymentMethod;
+    public TextView transactionId,name,time,addorMinus,amount,paymentMethod, symbol;
 
     public TransactionHistoryViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -18,6 +18,7 @@ public class TransactionHistoryViewHolder extends RecyclerView.ViewHolder {
         time=itemView.findViewById(R.id.time);
         addorMinus=itemView.findViewById(R.id.op);
         amount=itemView.findViewById(R.id.amt);
-        paymentMethod=itemView.findViewById(R.id.payment);
+        paymentMethod=itemView.findViewById(R.id.paymentm);
+        symbol = itemView.findViewById(R.id.symbol);
     }
 }

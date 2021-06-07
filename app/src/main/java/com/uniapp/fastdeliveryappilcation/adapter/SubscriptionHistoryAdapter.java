@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.uniapp.fastdeliveryappilcation.model.ActiveSubscription;
 import com.uniapp.fastdeliveryappilcation.model.SubscriptionHistory;
 import com.uniapp.fastdeliveryappilcation.viewholder.SubscriptionHistoryViewHolder;
 
@@ -30,20 +31,15 @@ public class SubscriptionHistoryAdapter extends RecyclerView.Adapter<Subscriptio
     public SubscriptionHistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         view= LayoutInflater.from(parent.getContext()).inflate(R.layout.subcription_history_single_item,parent,false);
-        SubscriptionHistoryViewHolder subscriptionHistoryViewHolder=new SubscriptionHistoryViewHolder(view);
-        return  subscriptionHistoryViewHolder;
+        return new SubscriptionHistoryViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SubscriptionHistoryViewHolder holder, int position) {
-
         SubscriptionHistory subscriptionHistory = subscriptionHistories.get(position);
-        holder.subscriptionid.setText(subscriptionHistory.getSubscriptionId());
+        holder.subscriptionid.setText(String.valueOf(subscriptionHistory.getSubscriptionid()));
         holder.plan.setText(subscriptionHistory.getPlan());
         holder.time.setText(subscriptionHistory.getTime());
-        holder.addorminus.setText(subscriptionHistory.getAddorMinus());
-        holder.amount.setText(subscriptionHistory.getAmount());
-
     }
 
     @Override

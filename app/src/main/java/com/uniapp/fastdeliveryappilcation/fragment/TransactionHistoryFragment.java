@@ -12,24 +12,27 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.uniapp.fastdeliveryappilcation.R;
 import com.uniapp.fastdeliveryappilcation.adapter.TransactionHistoryAdapter;
+import com.uniapp.fastdeliveryappilcation.controller.ProductController;
+import com.uniapp.fastdeliveryappilcation.model.TransactionHistory;
+import com.uniapp.fastdeliveryappilcation.view.ITransactionHistoryView;
 
-public class TransactionHistoryFragment extends Fragment {
+public class TransactionHistoryFragment extends Fragment implements ITransactionHistoryView {
     RecyclerView recyclerView;
+    ProductController productController;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_transaction_history,container,false);
         recyclerView=view.findViewById(R.id.transaction_list);
+        productController = new ProductController(this, view);
+        productController.handleTransactionHistory();
 
-        TransactionHistoryAdapter transactionhistoryAdapter = new TransactionHistoryAdapter(getActivity(), null);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(transactionhistoryAdapter);
         return (view);
     }
 
@@ -37,5 +40,13 @@ public class TransactionHistoryFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+    }
+
+    @Override
+    public void initData(List<TransactionHistory> transactionHistoryList) {
+        TransactionHistoryAdapter transactionhistoryAdapter = new TransactionHistoryAdapter(getActivity(), transactionHistoryList);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(transactionhistoryAdapter);
     }
 }
