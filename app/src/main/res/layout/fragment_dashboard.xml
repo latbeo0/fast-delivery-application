@@ -83,7 +83,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/open_sans"
                     android:padding="2dp"
-                    android:text="@string/Rs"
+                    android:text="$"
                     android:textSize="15sp" />
 
                 <TextView

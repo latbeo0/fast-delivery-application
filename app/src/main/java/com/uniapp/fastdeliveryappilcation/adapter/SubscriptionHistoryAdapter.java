@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.uniapp.fastdeliveryappilcation.model.ActiveSubscription;
 import com.uniapp.fastdeliveryappilcation.model.SubscriptionHistory;
 import com.uniapp.fastdeliveryappilcation.viewholder.SubscriptionHistoryViewHolder;
 

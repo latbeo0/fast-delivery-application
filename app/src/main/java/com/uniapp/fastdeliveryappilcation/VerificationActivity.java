@@ -1,7 +1,5 @@
 package com.uniapp.fastdeliveryappilcation;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +8,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -60,7 +60,7 @@ public class VerificationActivity extends AppCompatActivity implements IVerifica
     @Override
     public void handlePreferences(Map<String, Object> params) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("id", params.get("id") != null ? (String) params.get("id") : "");
+        editor.putString("id", params.get("id") != null ?  params.get("id").toString() : "");
         editor.putString("email", params.get("email") != null ? (String) params.get("email") : "");
         editor.putString("name", params.get("name") != null ? (String) params.get("email") : "");
         editor.putString("phone", params.get("phone") != null ? (String) params.get("phone") : "");
