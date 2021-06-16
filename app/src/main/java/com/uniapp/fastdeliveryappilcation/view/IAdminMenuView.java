@@ -6,7 +6,6 @@ import com.uniapp.fastdeliveryappilcation.model.Slider;
 
 import java.util.List;
 
-public interface IDashboardView {
-    void initCredit(String number);
-    void sliderInitData(View view, List<Slider> sliderList);
+public interface IAdminMenuView {
+    void initData(View view, List<Slider> list);
 }

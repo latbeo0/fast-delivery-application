@@ -14,6 +14,7 @@ import com.smarteist.autoimageslider.IndicatorView.draw.controller.DrawControlle
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 import com.uniapp.fastdeliveryappilcation.adapter.SliderAdapter;
+import com.uniapp.fastdeliveryappilcation.dao.SliderDao;
 import com.uniapp.fastdeliveryappilcation.dao.SubscriptionDao;
 import com.uniapp.fastdeliveryappilcation.dao.SubscriptionHistoryDao;
 import com.uniapp.fastdeliveryappilcation.dao.UserDao;
@@ -44,9 +45,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class ProductController implements IProductController{
-    Adapter adapter;
     List<Slider> models;
-    SliderAdapter sliderAdapter;
     private UserDatabase userDatabase;
     ICheckoutView checkoutView;
     ISubscriptionView subscriptionView;
@@ -94,27 +93,16 @@ public class ProductController implements IProductController{
     }
 
     @Override
-    public void handleSliderInitialization(View view, ViewPager viewPager, SliderView sliderView) {
-        models = new ArrayList<>();
-        models.add(new Slider(R.drawable.photo1, "LUNCH", "Poster is any piece of printed paper designed to be attached to a wall or vertical surface.", 1,0));
-        models.add(new Slider(R.drawable.photo3, "DINNER", "Business cards are cards bearing business information about a company or individual.", 1,0));
-        models.add(new Slider(R.drawable.photo3, "COMBO", "Business cards are cards bearing business information about a company or individual.", 0,1));
+    public void handleSliderInitialization(View view) {
+        Executor myExecutor = Executors.newSingleThreadExecutor();
+        myExecutor.execute(() -> {
+            SliderDao sliderDao = userDatabase.getSliderDao();
+            List<Slider> list = sliderDao.getAll();
 
-        adapter = new Adapter(models, view.getContext());
-        viewPager.setAdapter(adapter);
-        viewPager.setPadding(130, 0, 130, 0);
-
-        sliderAdapter = new SliderAdapter(view.getContext());
-        sliderAdapter.setCount(3);
-        sliderView.setSliderAdapter(adapter);
-        sliderView.setIndicatorAnimation(IndicatorAnimations.SLIDE); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
-        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
-        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
-        sliderView.setIndicatorSelectedColor(Color.WHITE);
-        sliderView.setIndicatorUnselectedColor(Color.GRAY);
-        sliderView.setScrollTimeInSec(2);
-        sliderView.startAutoCycle();
-        sliderView.setOnIndicatorClickListener(sliderView::setCurrentPagePosition);
+            ContextCompat.getMainExecutor(view.getContext()).execute(()  -> {
+                dashboardView.sliderInitData(view, list);
+            });
+        });
     }
 
     @Override

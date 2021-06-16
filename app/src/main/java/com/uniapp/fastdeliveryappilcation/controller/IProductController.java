@@ -14,7 +14,7 @@ import com.uniapp.fastdeliveryappilcation.view.ISubscriptionView;
 import java.util.Map;
 
 public interface IProductController {
-    void handleSliderInitialization(View view, ViewPager viewPager, SliderView sliderView);
+    void handleSliderInitialization(View view);
     void handleMenuInitialization(TabLayout tabLayout, ViewPager viewPager, ViewPagerAdapter viewPagerAdapter);
     void handleWalletTransaction(Map<String, Object> params);
     void handleAddWalletTransaction(Map<String, Object> params);

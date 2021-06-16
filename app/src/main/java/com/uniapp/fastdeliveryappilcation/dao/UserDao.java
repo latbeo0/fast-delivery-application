@@ -6,7 +6,10 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.uniapp.fastdeliveryappilcation.model.Slider;
 import com.uniapp.fastdeliveryappilcation.model.User;
+
+import java.util.List;
 
 @Dao
 public interface UserDao {
@@ -30,4 +33,7 @@ public interface UserDao {
 
     @Query("UPDATE User SET address = :amount WHERE id = :id")
     void handleAddress(String id, String amount);
+
+    @Query("SELECT * FROM User")
+    List<User> getAll();
 }

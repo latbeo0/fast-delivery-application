@@ -1,10 +1,49 @@
 package com.uniapp.fastdeliveryappilcation.model;
-public class Slider {
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "slider")
+public class Slider {
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    long id;
+
+    @ColumnInfo(name = "image")
     private int image;
+
+    @ColumnInfo(name = "title")
     private String title;
+
+    @ColumnInfo(name = "desc")
     private String desc;
+
+    @ColumnInfo(name = "meal")
     private int meal;
+
+    @ColumnInfo(name = "combo")
+    private int combo;
+
+    public Slider(int image, String title, String desc, int meal,int combo) {
+        this.image = image;
+        this.title = title;
+        this.desc = desc;
+        this.meal = meal;
+        this.combo=combo;
+    }
+
+    public Slider() {
+
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public int getCombo() {
         return combo;
@@ -14,7 +53,6 @@ public class Slider {
         this.combo = combo;
     }
 
-    private int combo;
 
     public int getMeal() {
         return meal;
@@ -22,14 +60,6 @@ public class Slider {
 
     public void setMeal(int meal) {
         this.meal = meal;
-    }
-
-    public Slider(int image, String title, String desc, int meal,int combo) {
-        this.image = image;
-        this.title = title;
-        this.desc = desc;
-        this.meal = meal;
-        this.combo=combo;
     }
 
     public int getImage() {

@@ -13,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -45,7 +46,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     EditText phoneNumber;
     ImageView googleLogin;
     LoginButton facebookLogin;
-
+    TextView adminText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +84,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
 
         OnOtpLogin();
 
+        OnAdminSectionListener();
     }
 
     private void OnLoginCheck() {
@@ -186,5 +188,13 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
     @Override
     public void OnLoginError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    private void OnAdminSectionListener() {
+        adminText = findViewById(R.id.admin);
+
+        adminText.setOnClickListener(t -> {
+            startActivity(new Intent(LoginActivity.this, AdminLoginActivity.class));
+        });
     }
 }
