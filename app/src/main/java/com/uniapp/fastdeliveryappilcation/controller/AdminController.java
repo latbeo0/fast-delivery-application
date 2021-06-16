@@ -96,7 +96,7 @@ public class AdminController implements IAdminController {
             SliderDao sliderDao = userDatabase.getSliderDao();
             List<Slider> list = sliderDao.getAll();
 
-            ContextCompat.getMainExecutor((Context) adminMenuView).execute(()  -> {
+            ContextCompat.getMainExecutor(adminView.getContext()).execute(()  -> {
                 adminMenuView.initData(adminView, list);
             });
         });
@@ -109,7 +109,7 @@ public class AdminController implements IAdminController {
             UserDao userDao = userDatabase.getUserDao();
             List<User> list = userDao.getAll();
 
-            ContextCompat.getMainExecutor((Context) adminProfileView).execute(()  -> {
+            ContextCompat.getMainExecutor(adminView.getContext()).execute(()  -> {
                 adminProfileView.initData(adminView, list);
             });
         });

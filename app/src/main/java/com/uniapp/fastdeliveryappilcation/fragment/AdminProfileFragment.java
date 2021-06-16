@@ -57,7 +57,7 @@ public class AdminProfileFragment extends Fragment implements IAdminProfileView 
     @Override
     public void initData(View view, List<User> list) {
         recyclerView = view.findViewById(R.id.profile_list);
-        AdminProfileAdapter adminProfileAdapter = new AdminProfileAdapter(list);
+        AdminProfileAdapter adminProfileAdapter = new AdminProfileAdapter(context, list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adminProfileAdapter);
     }

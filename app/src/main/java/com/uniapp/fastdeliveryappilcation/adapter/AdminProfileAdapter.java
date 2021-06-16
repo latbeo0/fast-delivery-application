@@ -22,15 +22,16 @@ public class AdminProfileAdapter extends RecyclerView.Adapter<AdminProfileViewHo
     List<User> users;
     IAdminController adminController;
 
-    public AdminProfileAdapter(List<User> users) {
+    public AdminProfileAdapter(Context context, List<User> users) {
         this.users = users;
+        this.context = context;
     }
 
     @NonNull
     @Override
     public AdminProfileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
-        view = LayoutInflater.from(context).inflate(R.layout.item,parent,false);
+        view = LayoutInflater.from(context).inflate(R.layout.admin_profile_item,parent,false);
         return new AdminProfileViewHolder(view);
     }
 

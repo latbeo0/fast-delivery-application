@@ -31,7 +31,7 @@ public class AdminMenuItemActivity extends AppCompatActivity implements IAdminMe
         adminController = new AdminController(this);
         initVariable();
 
-        if (getIntent().getExtras().getLong("menuId") != 0) {
+        if (getIntent().getExtras() != null) {
             initData(getIntent().getExtras().getLong("menuId"));
         }
 
@@ -47,7 +47,7 @@ public class AdminMenuItemActivity extends AppCompatActivity implements IAdminMe
         next.setOnClickListener(t -> {
             Slider slider = new Slider();
 
-            slider.setId(getIntent().getExtras().getLong("menuId"));
+            slider.setId(getIntent().getExtras() != null ? getIntent().getExtras().getLong("menuId") : 0);
             slider.setTitle(title.getText().toString());
             slider.setDesc(description.getText().toString());
             slider.setMeal(Integer.parseInt(meal.getText().toString()));
@@ -66,8 +66,8 @@ public class AdminMenuItemActivity extends AppCompatActivity implements IAdminMe
     public void showItem(Slider slider) {
         title.setText(slider.getTitle());
         description.setText(slider.getDesc());
-        meal.setText(slider.getMeal());
-        combo.setText(slider.getCombo());
+        meal.setText(Integer.toString(slider.getMeal()));
+        combo.setText(Integer.toString(slider.getCombo()));
     }
 
     @Override

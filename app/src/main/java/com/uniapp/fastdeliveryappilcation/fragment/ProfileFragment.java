@@ -21,7 +21,7 @@ import com.uniapp.fastdeliveryappilcation.FeedbackActivity;
 import com.uniapp.fastdeliveryappilcation.MapActivity;
 import com.uniapp.fastdeliveryappilcation.PaymentActivity;
 import com.uniapp.fastdeliveryappilcation.R;
-import com.uniapp.fastdeliveryappilcation.TrialOrderActivity;
+import com.uniapp.fastdeliveryappilcation.SupportActivity;
 import com.uniapp.fastdeliveryappilcation.controller.UserController;
 import com.uniapp.fastdeliveryappilcation.model.User;
 import com.uniapp.fastdeliveryappilcation.ultils.ActivityConstants;
@@ -40,7 +40,7 @@ public class ProfileFragment extends Fragment implements IProfileView {
     FirebaseAuth mAuth;
 
     private Button logout;
-    private LinearLayout manageAddress, payment, orderTrial, shareApp, leaveFeedBack,contactUs;
+    private LinearLayout manageAddress, payment, support, shareApp, leaveFeedBack,contactUs;
 
     public ProfileFragment(Context context, SharedPreferences sharedPreferences) {
         this.context = context;
@@ -63,7 +63,7 @@ public class ProfileFragment extends Fragment implements IProfileView {
         initData(view);
 
         initAddress(view);
-        initOrder(view);
+        initSupport(view);
         initLogOut(view);
         initFeedBack(view);
         initPayment(view);
@@ -97,9 +97,9 @@ public class ProfileFragment extends Fragment implements IProfileView {
         manageAddress.setOnClickListener(v -> startActivity(new Intent(context, MapActivity.class)));
     }
 
-    private void initOrder(View view) {
-        orderTrial = view.findViewById(R.id.order_trial);
-        orderTrial.setOnClickListener(v -> startActivity(new Intent(context, TrialOrderActivity.class)));
+    private void initSupport(View view) {
+        support = view.findViewById(R.id.support);
+        support.setOnClickListener(v -> startActivity(new Intent(context, SupportActivity.class)));
     }
 
     private void initLogOut(View view) {
@@ -118,7 +118,6 @@ public class ProfileFragment extends Fragment implements IProfileView {
         leaveFeedBack.setOnClickListener(v -> startActivity(new Intent(context, FeedbackActivity.class)));
     }
 
-    
     private void initPayment(View view) {
         payment = view.findViewById(R.id.payment);
         payment.setOnClickListener(v -> startActivity(new Intent(context, PaymentActivity.class)));

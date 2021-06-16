@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.uniapp.fastdeliveryappilcation.AdminLoginActivity;
+import com.uniapp.fastdeliveryappilcation.AdminMenuItemActivity;
 import com.uniapp.fastdeliveryappilcation.AdminSignupActivity;
 import com.uniapp.fastdeliveryappilcation.R;
 import com.uniapp.fastdeliveryappilcation.controller.IAdminController;
@@ -50,7 +51,7 @@ public class AdminMenuAdapter extends RecyclerView.Adapter<AdminMenuViewHolder>{
         holder.descp.setText(slider.getDesc());
 
         holder.image.setOnClickListener(t -> {
-            view.getContext().startActivity(new Intent(context, AdminSignupActivity.class).putExtra("menuId",slider.getId()));
+            view.getContext().startActivity(new Intent(context, AdminMenuItemActivity.class).putExtra("menuId",slider.getId()));
         });
     }
     @Override

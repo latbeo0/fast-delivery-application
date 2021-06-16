@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.uniapp.fastdeliveryappilcation.fragment.AdminMenuFragment;
 import com.uniapp.fastdeliveryappilcation.fragment.AdminProfileFragment;
+import com.uniapp.fastdeliveryappilcation.fragment.AdminSupportFragment;
 import com.uniapp.fastdeliveryappilcation.fragment.DashboardFragment;
 import com.uniapp.fastdeliveryappilcation.fragment.ProfileFragment;
 import com.uniapp.fastdeliveryappilcation.fragment.SubscriptionFragment;
@@ -53,6 +54,10 @@ public class AdminActivity extends AppCompatActivity implements IAdminView {
                     return true;
                 case R.id.profile:
                     fragment = new AdminProfileFragment(getApplicationContext(), sharedPreferences);
+                    loadFragment(fragment);
+                    return true;
+                case R.id.support:
+                    fragment = new AdminSupportFragment(this, sharedPreferences);
                     loadFragment(fragment);
                     return true;
             }

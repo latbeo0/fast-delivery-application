@@ -14,5 +14,10 @@
         android:title=""
         />
 
+    <item android:id="@+id/support"
+        android:icon="@drawable/ic_support_24"
+        android:title=""
+        />
+
 
 </menu>
