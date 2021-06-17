@@ -82,9 +82,10 @@ public class EditProfileBottomSheet extends BottomSheetDialogFragment {
         editTextUsername.setText(username);
         editTextUsername.setSelection(username.length());
         editTextNumber.setText(number);
-        editTextNumber.setSelection(number.length());
+        editTextNumber.getText().clearSpans();
+        editTextNumber.setSelection(number.length() -1);
         editTextEmail.setText(email);
-        editTextEmail.setSelection(email.length());
+        editTextEmail.setSelection(email.length() -1);
     }
 
     private void updatePhoneNumber(String new_number) {
