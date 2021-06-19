@@ -90,9 +90,9 @@ public class EditProfileBottomSheet extends BottomSheetDialogFragment {
         editTextUsername.setSelection(username.length());
         editTextNumber.setText(number);
         editTextNumber.getText().clearSpans();
-        editTextNumber.setSelection(number.length() -1);
+        editTextNumber.setSelection(number.length());
         editTextEmail.setText(email);
-        editTextEmail.setSelection(email.length() -1);
+        editTextEmail.setSelection(email.length());
     }
 
     private void updatePhoneNumber(String new_number) {

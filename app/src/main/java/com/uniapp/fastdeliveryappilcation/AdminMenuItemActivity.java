@@ -52,7 +52,7 @@ public class AdminMenuItemActivity extends AppCompatActivity implements IAdminMe
         delete.setVisibility(View.INVISIBLE);
 
         next.setOnClickListener(t -> {
-            if (validateData()) {
+            if (!validateData()) {
                 Toast.makeText(this,"Please fill all empty fields!",Toast.LENGTH_SHORT).show();
                 return;
             }

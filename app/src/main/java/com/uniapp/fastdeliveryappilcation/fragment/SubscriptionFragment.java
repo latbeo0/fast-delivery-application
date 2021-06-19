@@ -73,7 +73,7 @@ public class SubscriptionFragment extends Fragment implements ISubscriptionView 
         date_Of_activation[0]= String.valueOf(sublist.get("date_Of_activation"));
 
         no_of_dabba[0]=String.valueOf(sublist.get("no_of_dabba"));
-        subcriptionList.add(new ActiveSubscription(Long.parseLong(String.valueOf(sublist.get("id"))), days[0] , date_Of_activation[0],"13-06-2021",no_of_dabba[0]));
+        subcriptionList.add(new ActiveSubscription(Long.parseLong(String.valueOf(sublist.get("id"))), days[0] , date_Of_activation[0],"26-06-2021",no_of_dabba[0]));
         ActiveSubscriptionAdapter subcriptionAdapter = new ActiveSubscriptionAdapter(getContext(),this, subcriptionList, productController);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(subcriptionAdapter);
