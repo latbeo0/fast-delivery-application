@@ -207,6 +207,21 @@
                 android:textColor="#fff"
                 android:letterSpacing="0.5"
                 android:layout_height="60dp" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                app:backgroundTint="@color/colorPrimary"
+                android:layout_margin="16dp"
+                android:text="remove"
+                android:id="@+id/delete"
+                android:textAllCaps="true"
+                android:layout_gravity="center"
+                app:cornerRadius="8dp"
+                android:textSize="21dp"
+                android:textColor="#fff"
+                android:letterSpacing="0.5"
+                android:layout_height="60dp" />
         </LinearLayout>
 
     </ScrollView>

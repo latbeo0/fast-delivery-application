@@ -10,4 +10,5 @@ public interface IAdminController {
     void InitProfileMenu();
     void getMenuItemById(Long id);
     void handleMenuItem(Slider slider);
+    void handleDeleteMenuItem(Slider slider);
 }

@@ -145,4 +145,20 @@ public class AdminController implements IAdminController {
             });
         });
     }
+
+    @Override
+    public void handleDeleteMenuItem(Slider slider) {
+        Executor myExecutor = Executors.newSingleThreadExecutor();
+        myExecutor.execute(() -> {
+            SliderDao sliderDao = userDatabase.getSliderDao();
+
+            if (slider.getId() != 0) {
+                sliderDao.deleteAll(slider);
+            }
+
+            ContextCompat.getMainExecutor((Context) adminMenuItemView).execute(()  -> {
+                adminMenuItemView.handleItemSuccess();
+            });
+        });
+    }
 }
