@@ -2,7 +2,6 @@ package com.uniapp.fastdeliveryappilcation.ultils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,12 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.uniapp.fastdeliveryappilcation.R;
 import com.uniapp.fastdeliveryappilcation.VerificationActivity;
@@ -30,7 +27,7 @@ public class EditProfileBottomSheet extends BottomSheetDialogFragment {
     private Context context;
 
 
-    public EditProfileBottomSheet(Context context, UserController userController, String Id , String number, String email, String username, String amount, String address) {
+    public EditProfileBottomSheet(Context context, UserController userController, String Id , String username, String email, String number, String amount, String address) {
         this.context = context;
         this.number = number;
         this.email = email;
